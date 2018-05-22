@@ -1,6 +1,8 @@
 
 set -x
 
+mkdir -p $MESOS_DIRECTORY
+
 CODE=$(curl -s -o /dev/null -w %{http_code} http://${MESOS_AGENT_ENDPOINT%:*}:$PORT0/)
 
 if [ $CODE -ge 200 -a $CODE -lt 300 ]
