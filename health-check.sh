@@ -1,6 +1,9 @@
 
 set -x
 
+export MESOS_AGENT_ENDPOINT=$MESOS_AGENT_ENDPOINT
+export MESOS_DIRECTORY=$MESOS_DIRECTORY
+
 CODE=$(curl -s -o /dev/null -w %{http_code} http://${MESOS_AGENT_ENDPOINT%:*}:$PORT0/)
 
 if [ $CODE -ge 200 -a $CODE -lt 300 ]
