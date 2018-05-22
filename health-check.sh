@@ -6,7 +6,7 @@ export STATUS_DIRECTORY=$APP_DIRECTORY/$MESOS_TASK_ID
 
 mkdir -p $STATUS_DIRECTORY
 
-CODE=$(curl -s -o /dev/null -w %{http_code} http://${MESOS_AGENT_ENDPOINT%:*}:$PORT0$HEALTH_PATH)
+CODE=$(curl -s -o /dev/null -w %{http_code} http://${MESOS_AGENT_ENDPOINT%:*}:$PORT0${HEALTH_PATH:-/health})
 
 if [ $CODE -ge 200 -a $CODE -lt 300 ]
 then
