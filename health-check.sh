@@ -1,20 +1,25 @@
 
 set -x
 
-export APP_DIRECTORY=/tmp$MARATHON_APP_ID
-export STATUS_DIRECTORY=$APP_DIRECTORY/$MESOS_TASK_ID
+URI_SCHEMA=${URI_SCHEMA:-http}
+SLAVE_URL=${MESOS_AGENT_ENDPOINT%:*}
+HEALTH_PATH=${HEALTH_PATH:-/health}
+UNKNOWN_CODE=${UNKNOWN_CODE:-503}
+
+APP_DIRECTORY=/tmp$MARATHON_APP_ID
+STATUS_DIRECTORY=$APP_DIRECTORY/$MESOS_TASK_ID
 
 mkdir -p $STATUS_DIRECTORY
 
-echo $HOST
+echo "$HOST:$PORT0"
 
-CODE=$(curl -s -o /dev/null -w %{http_code} http://${MESOS_AGENT_ENDPOINT%:*}:$PORT0${HEALTH_PATH:-/health})
+CODE=$(curl -s -o /dev/null -w %{http_code} $URI_SCHEMA://$SLAVE_URL:$PORT0$HEALTH_PATH)
 
 if [ $CODE -ge 200 -a $CODE -lt 300 ]
 then
   echo 0 > $STATUS_DIRECTORY/status
 else
-  if [ $CODE -eq 503 ]
+  if [ $CODE -eq $UNKNOWN_CODE ]
   then
     if [ ! -f $STATUS_DIRECTORY/status ]
     then
